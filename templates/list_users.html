@@ -3,7 +3,18 @@
 {% include "navbar.html" %}
 <div class="container mt-5">
     <div class="container box ">
-        <h1 class="title algolia-lvl0"><p>List of User</p></h1>
+        <div class="columns">
+            <div class="column">
+                <h1 class="title algolia-lvl0"><p>List of User</p></h1>
+            </div>
+            <div class="column"></div>
+            <div class="column"></div>
+            <div class="column">
+                {% if current_user.role in ['Moderator', 'Administrator'] %}
+                <a href="{{ url_for('create_user') }}" class="card-footer-item button is-info"><i class="fa-solid fa-plus"></i>&nbsp;Add user</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class="container box">
         <div class="columns is-gapless box has-background-light">

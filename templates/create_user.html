@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="box">
+        <h1 class="title">Create User</h1>
+        <form method="POST" action="{{ url_for('create_user') }}">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <label class="label">Username</label>
+                <div class="control">
+                    {{ form.username(class="input") }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                    {{ form.email(class="input") }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Password</label>
+                <div class="control">
+                    {{ form.password(class="input") }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Confirm Password</label>
+                <div class="control">
+                    {{ form.confirm_password(class="input") }}
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link" type="submit">Create User</button>
+                </div>
+                <div class="control">
+                    <a href="{{ url_for('list_users') }}" class="button is-text">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -7,6 +7,27 @@
         {{ form.hidden_tag() }}
         <h1 class="title">Sign up</h1>
             <div class="columns is-flex is-flex-direction-column box">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                <div class="container"><div class="notification is-{{ category }}">
+                                    <button class="delete"></button>
+                                    {{ message }}
+                                </div></div>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                            const $notification = $delete.parentNode;
+
+                            $delete.addEventListener('click', () => {
+                            $notification.parentNode.removeChild($notification);
+                            });
+                        });
+                        });
+                        </script>
                 <div class="column">
                     <label for="Name">Username</label>
                     <input class="input is-primary" name="username" type="text" placeholder="Enter Name">

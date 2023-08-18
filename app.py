@@ -120,7 +120,6 @@ class UserAdminForm(FlaskForm):
     roles = SelectField('Role', choices=[('Viewer', 'Viewer'), ('Moderator', 'Moderator'), ('Administrator', 'Administrator')])
     submit = SubmitField('Update User')
 
-
 class UpdatePasswordForm(FlaskForm):
     old_password = PasswordField('Old Password', validators=[DataRequired()])
     new_password = PasswordField('New Password', validators=[DataRequired()])
@@ -168,6 +167,7 @@ def register():
         db.session.commit()
         flash('Your account has been created! You can now login.', 'success')
         return redirect(url_for('login'))
+    flash('Registration failed. Please check the entered data', 'danger')
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/logout')
@@ -303,6 +303,25 @@ def list_users():
 
     users = User.query.all()
     return render_template('list_users.html', users=users)
+
+@app.route('/admin/users/create', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    if current_user.role != 'Administrator':
+        flash('Only Administrators can create users.', 'danger')
+        return redirect(url_for('list_users'))
+
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('User created successfully!', 'success')
+        return redirect(url_for('list_users'))
+
+    return render_template('create_user.html', title='Create User', form=form)
 
 @app.route('/admin/users/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
