@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="container box ">
+        <h1 class="title algolia-lvl0"><p>Profile</p></h1>
+    </div>
+
+    <div class="container box">
+        <div class="columns">
+            <div class="column box is-one-third has-background-light">
+                <br>
+                <div class="content has-text-centered">
+                    <figure class="image is-128x128" style="margin-left: auto; margin-right: auto;">
+                        <img class="is-rounded" src="{{ url_for('static', filename='img/profile.png') }}">
+                    </figure>
+                </div>
+                <div class="content has-text-centered">
+                    <strong><p>{{ current_user.username }}</p></strong>
+                    <strong><p>{{ current_user.role }}</p></strong>
+                </div>
+                <a href="" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i>&nbsp;Edit</a>
+            </div>
+            <div class="column box has-background-light" style="margin-left: 20px;">
+                <div class="content">
+                    <p><strong>Email: </strong>{{ current_user.email }}</p>
+                    <p><strong>Username: </strong>{{ current_user.username }}</p>
+                    <p><strong>Role: </strong>{{ current_user.role }}</p>
+                    {% if current_user.api_key %}
+                    <p><strong>API-key: </strong><span class="tag is-dark is-medium">{{ current_user.api_key }}</span></p>
+                    {% endif %}
+                    
+                    <form action="{{ url_for('generate_key') }}" method="post">
+                        <button type="submit" class="button is-info"><i class="fa-solid fa-key"></i>&nbsp;Generate API Key</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

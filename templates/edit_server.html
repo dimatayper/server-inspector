@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container">
+    <h2 class="my-4">Edit Server</h2>
+    <form action="{{ url_for('edit_server', id=server.id) }}" method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.hostname.label }} {{ form.hostname }}
+        {{ form.domain.label }} {{ form.domain }}
+        {{ form.ip_address.label }} {{ form.ip_address }}
+         <!-- добавьте все другие поля формы аналогично -->
+        {{ form.submit(class="btn btn-primary mt-3") }}
+    </form>
+</div>
+{% endblock %}

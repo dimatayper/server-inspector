@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="container box ">
+        <h1 class="title algolia-lvl0"><p>List of User</p></h1>
+    </div>
+    <div class="container box">
+        <div class="columns is-gapless box has-background-light">
+            <div class="column is-one-quarter">
+                <strong>Username</strong>
+            </div>
+            <div class="column is-one-quarter">
+                <strong>Email</strong>
+            </div>
+            <div class="column is-one-quarter">
+                <strong>Role</strong>
+            </div>
+            <div class="column is-one-quarter">
+                <strong>Actions</strong>
+            </div>
+        </div>
+    {% for user in users %}
+    <div class="columns is-gapless box">
+        <div class="column is-one-quarter">
+            {{ user.username }}
+        </div>
+        <div class="column is-one-quarter">
+            {{ user.email }}
+        </div>
+        <div class="column is-one-quarter">
+            {{ user.role }}
+        </div>
+        <div class="column is-one-quarter">
+            <div class="columns">
+                <div class="column">
+                    <a href="{{ url_for('edit_user', id=user.id) }}" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i> &nbsp;Edit</a>
+                </div>
+                <div class="column">
+                    <a href="{{ url_for('delete_user', id=user.id) }}" class="card-footer-item button is-danger"><i class="fa-solid fa-trash"></i>&nbsp;Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

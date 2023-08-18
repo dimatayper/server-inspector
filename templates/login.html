@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-6-tablet is-5-desktop is-4-widescreen">
+                    <form action="{{ url_for('login') }}" method="POST" class="box is-shadowless">
+                        {{ form.hidden_tag() }}
+                        <h1 class="title">Sign in</h1>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="field">
+                                    <label for="" class="label">Email</label>
+                                    <div class="control has-icons-left">
+                                        <input type="text" name="username" placeholder="admin" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="" class="label">Password</label>
+                                    <div class="control has-icons-left">
+                                        <input type="password" name="password" placeholder="*******" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="field buttons">
+                                    <button class="button is-fullwidth is-primary" type="submit">
+                                        <span class="icon"><i class="gg-log-in"></i></span><span>Login</span>
+                                    </button></div>
+                            </div>
+                            <div class="card"></div>
+                            <div class="card-content">
+                                <div class="has-text-centered">
+                                    <p class="is-size-7"> Don't have an account? <a href="{{ url_for('register') }}" class="has-text-primary">Sign up</a>
+                                    </p>
+                                </div>
+                            </div>
+                            </div>
+                            {% if form.errors %}
+                            <div class="card">
+                                <div class="card-content">
+                                        {% for error in form.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

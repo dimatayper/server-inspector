@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="container box ">
+        <h1 class="title algolia-lvl0"><p>Delete {{ user.username }}</p></h1>
+        <form action="{{ url_for('delete_user', id=user.id) }}" method="post">
+            <p>Are you sure you want to delete {{ user.username }}?</p><br>
+            <button type="submit" class="button is-danger">Delete</button>
+        </form>
+        <br>
+        <a href="{{ url_for('list_users') }}"><button class="button is-link">Back to user list</button></a>
+    </div>
+</div>
+{% endblock %}

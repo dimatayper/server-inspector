@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Server Inspector{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/bulma.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome/css/all.css') }}">
+    <script src="{{ url_for('static', filename='font-awesome/js/all.js') }}" crossorigin="anonymous"></script>
+
+</head>
+<body class="has-background-light" style="min-height: 100vh;">
+    {% block content %}{% endblock %}
+</body>
+</html>

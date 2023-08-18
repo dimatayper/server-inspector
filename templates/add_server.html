@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить сервер{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Добавить сервер</h2>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.hostname.label }}
+            {{ form.hostname(class="form-control") }}
+        </div>
+        <!-- Другие поля формы -->
+        <button type="submit" class="btn btn-primary">Добавить сервер</button>
+    </form>
+</div>
+{% endblock %}
