@@ -22,6 +22,7 @@
 
         {% if current_user.role == 'Administrator' %}
           <a class="navbar-item" href="{{ url_for('list_users') }}">Users</a>
+          <a class="navbar-item" href="{{ url_for('app_settings') }}">Settings</a>
         {% endif %}
       </div>
       

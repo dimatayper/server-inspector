@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="container box ">
+        <h1 class="title algolia-lvl0"><p>Application settings</p></h1>
+    </div>
+    <div class="container box ">
+        {% if form.errors %}
+            <div class="card">
+                <div class="card-content">
+                    <label class="label">Check that these parameters are correct:</label>
+                    <article class="message is-danger">
+                        <div class="message-body">
+                        {% for error in form.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </div>
+                </article>
+                </div>
+            </div>
+            <br>
+        {% endif %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">{{ form.disable_registration.label }}</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                    <input type="checkbox" name="disable_registration" {% if form.disable_registration.data %} checked {% endif %}>
+                </p>
+              </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">{{ form.localization.label }}</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                    <div class="select">{{ form.localization() }}</div>
+                </p>
+              </div>
+            </div>
+        </div>
+
+        {{ form.submit(class="button is-fullwidth is-primary") }}
+    </form>
+
+</div><br>
+</div>
+
+{% endblock %}

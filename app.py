@@ -8,13 +8,33 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_bcrypt import Bcrypt
-from db import db, bcrypt, User, Server
+from db import db, bcrypt, User, Server, AppSettings
 import secrets
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'mysecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config.from_object('config') 
 
+def init_app_settings():
+    if not AppSettings.query.first():
+        default_settings = [
+            {"disable_registration": app.config['DISABLE_REGISTRATION'],
+             "localization":app.config['LOCALIZATION']}
+        ]
+        for setting in default_settings:
+            db.session.add(AppSettings(**setting))
+        db.session.commit()
+
+    if not User.query.first():
+        default_users = [
+            {"username": "admin",
+             "email": "admin@admin.com",
+             "password": "pbkdf2:sha256:600000$khxYSu0k3jtpAlIp$398c21d7a692af44e7a5f1f0ff3d05eed81b9ff2d74622760df33ff2d17dcb3e",
+             "role": "Administrator"},
+        ]
+        for user_data in default_users:
+            user = User(**user_data)
+            db.session.add(user)
+        db.session.commit()
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -27,6 +47,7 @@ bcrypt.init_app(app)
 
 with app.app_context():
         db.create_all()
+        init_app_settings()
 
 
 def generate_api_key():
@@ -106,6 +127,10 @@ class UpdatePasswordForm(FlaskForm):
     confirm_new_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Change Password')
 
+class AppSettingsForm(FlaskForm):
+    disable_registration = BooleanField('Disable registration')
+    localization = SelectField('Localization choice', choices=[('en', 'English'), ('ru', 'Русский')])
+    submit = SubmitField('Update settings')
 
 @app.route('/')
 def index():
@@ -129,21 +154,20 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    print(11)
+    disable_reg_setting = AppSettings.query.filter_by(disable_registration="1").first()
+    if disable_reg_setting:
+        flash('Registration is currently disabled.', 'danger')
+        return redirect(url_for('login'))
     if current_user.is_authenticated:
-        print(12)
         return redirect(url_for('dashboard'))
     form = RegistrationForm()
-    print(13)
     if form.validate_on_submit():
-        print(14)
         hashed_password = generate_password_hash(form.password.data)
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You can now login.', 'success')
         return redirect(url_for('login'))
-    print(15)
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/logout')
@@ -344,6 +368,30 @@ def generate_user_password(id):
     }
     
     return jsonify(response_data), 200
+
+@app.route('/admin/settings', methods=['GET', 'POST'])
+@login_required
+def app_settings():
+    if current_user.role != 'Administrator':
+        flash('Only administrators can change application settings.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    settings = AppSettings.query.first()
+    if not settings:
+        settings = AppSettings()
+        db.session.add(settings)
+        db.session.commit()
+
+    form = AppSettingsForm(obj=settings)
+
+    if form.validate_on_submit():
+        settings.disable_registration = form.disable_registration.data
+        settings.localization = form.localization.data
+        db.session.commit()
+        flash('Settings successfully saved.', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('app_settings.html', form=form)
 
 @app.route('/generate_api_key', methods=['POST'])
 @login_required

@@ -54,3 +54,8 @@ class Server(db.Model):
             'datacenter': self.datacenter,
             'owner': self.owner,
             'comment': self.comment }
+
+class AppSettings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    disable_registration = db.Column(db.Boolean, default=False, nullable=False)
+    localization = db.Column(db.String, nullable=False, default='en')
