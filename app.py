@@ -372,7 +372,7 @@ def generate_user_password(id):
     if current_user.role != 'Administrator':
         return jsonify({"error": "Only Administrators can generate passwords."}), 403
     
-    user = User.query.get(id)
+    user = db.session.get(User, id)
     if not user:
         return jsonify({"error": "User not found."}), 404
     
