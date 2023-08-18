@@ -3,16 +3,221 @@
 {% block title %}Добавить сервер{% endblock %}
 
 {% block content %}
+{% include "navbar.html" %}
 <div class="container mt-5">
-    <h2>Добавить сервер</h2>
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.hostname.label }}
-            {{ form.hostname(class="form-control") }}
+    <div class="container box ">
+        <h1 class="title algolia-lvl0"><p>Add new server</p></h1>
+    </div>
+    <div class="container box ">
+        {% if form.errors %}
+            <div class="card">
+                <div class="card-content">
+                    <label class="label">Check that these parameters are correct:</label>
+                    <article class="message is-danger">
+                        <div class="message-body">
+                        {% for error in form.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </div>
+                </article>
+                </div>
+            </div>
+            <br>
+        {% endif %}
+
+        <form action="{{ url_for('add_server') }}" method="post">
+            {{ form.hidden_tag() }}
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Hostname</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input class="input" type="text" name="hostname" placeholder="example-hostname">
+                </p>
+              </div>
+            </div>
         </div>
-        <!-- Другие поля формы -->
-        <button type="submit" class="btn btn-primary">Добавить сервер</button>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Domain</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input class="input" type="text" name="domain" placeholder="example.com">
+                </p>
+              </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Purpose</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input class="input" type="text" name="purpose" placeholder="Web Server">
+                </p>
+              </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">IP address</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <p class="control">
+                  <input class="input" type="text" name="ip_address" placeholder="192.168.1.1">
+                </p>
+              </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">SSH Port</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="ssh_port" placeholder="22">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Operating System</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="os" placeholder="Linux">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Number of Cores</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="number" name="cores" placeholder="4">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">RAM</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="ram" placeholder="8 GB">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">ROM</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="rom" placeholder="256 GB">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Datacenter</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="datacenter" placeholder="Datacenter Name">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Owner</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="owner" placeholder="John Doe">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Comment</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="comment" placeholder="Additional information">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Superuser Login</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="text" name="superuser_login" placeholder="admin">
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Superuser Password</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" type="password" name="superuser_password" placeholder="********">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="field buttons">
+            <button class="button is-fullwidth is-primary" type="submit">
+                <span>Add server</span>
+            </button>
+        </div>
+
     </form>
+    </div><br>
+
 </div>
 {% endblock %}

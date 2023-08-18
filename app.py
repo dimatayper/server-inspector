@@ -8,22 +8,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_bcrypt import Bcrypt
-
 from db import db, bcrypt, User, Server
-
 import secrets
-
-def generate_api_key():
-    return secrets.token_hex(16)
-
-def check_api_key():
-    data = request.json
-    api_key = data.get('api_key')
-    user = User.query.filter_by(api_key=api_key).first()
-    if not user:
-        return False
-    return True
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
@@ -39,10 +25,27 @@ db.init_app(app)
 bcrypt.init_app(app)
 
 
+with app.app_context():
+        db.create_all()
+
+
+def generate_api_key():
+    return secrets.token_hex(16)
+
+
+def check_api_key(required_roles=None):
+    data = request.json
+    api_key = data.get('api_key')
+    user = User.query.filter_by(api_key=api_key).first()
+
+    if not user or (required_roles and user.role not in required_roles):
+        return False
+    return True
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, (int(user_id)))
-
 
 
 class LoginForm(FlaskForm):
@@ -56,11 +59,11 @@ class ServerForm(FlaskForm):
     domain = StringField('Domain', validators=[DataRequired()])
     purpose = StringField('Purpose', validators=[DataRequired()])
     ip_address = StringField('IP Address', validators=[DataRequired()])
-    ssh_port = IntegerField('SSH Port', validators=[DataRequired()])
+    ssh_port = StringField('SSH Port', validators=[DataRequired()])
     os = StringField('OS', validators=[DataRequired()])
-    cores = IntegerField('Cores', validators=[DataRequired()])
-    ram = IntegerField('RAM (MB)', validators=[DataRequired()])
-    rom = IntegerField('ROM (MB)', validators=[DataRequired()])
+    cores = StringField('Cores', validators=[DataRequired()])
+    ram = StringField('RAM (MB)', validators=[DataRequired()])
+    rom = StringField('ROM (MB)', validators=[DataRequired()])
     datacenter = StringField('Datacenter', validators=[DataRequired()])
     owner = StringField('Owner', validators=[DataRequired()])
     comment = StringField('Comment', validators=[DataRequired()])
@@ -75,6 +78,11 @@ class UpdateServerForm(ServerForm):
     ip_address = StringField('IP Address', validators=[DataRequired()])
     submit = SubmitField('Update Server')
 
+class UpdateProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Update Profile')
+
 class DeleteServerForm(FlaskForm):
     submit = SubmitField('Delete Server')
 
@@ -85,9 +93,18 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
 
-class UserAdminForm(RegistrationForm):
+class UserAdminForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     roles = SelectField('Role', choices=[('Viewer', 'Viewer'), ('Moderator', 'Moderator'), ('Administrator', 'Administrator')])
     submit = SubmitField('Update User')
+
+
+class UpdatePasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_new_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Change Password')
 
 
 @app.route('/')
@@ -95,7 +112,6 @@ def index():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -130,11 +146,6 @@ def register():
     print(15)
     return render_template('register.html', title='Register', form=form)
 
-@app.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', title='Profile')
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -148,22 +159,57 @@ def dashboard():
     servers = Server.query.all()
     return render_template('dashboard.html', title='Dashboard', servers=servers)
 
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', title='Profile')
+
+@app.route('/profile/edit', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = UpdateProfileForm(obj=current_user)
+    
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
+    
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+@app.route('/password/edit', methods=['GET', 'POST'])
+@login_required
+def edit_password():
+    form = UpdatePasswordForm()
+    
+    if form.validate_on_submit():
+        if check_password_hash(current_user.password, form.old_password.data):
+            new_hashed_password = generate_password_hash(form.new_password.data)
+            current_user.password = new_hashed_password
+            db.session.commit()
+            flash('Password updated successfully!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash('Old password is incorrect.', 'danger')
+
+    return render_template('edit_password.html', title='Change Password', form=form)
 
 @app.route('/server/add', methods=['GET', 'POST'])
 @login_required
 def add_server():
+    print(1)
     if current_user.role not in ['Moderator', 'Administrator']:
         flash('You do not have permissions to add servers.', 'danger')
         return redirect(url_for('dashboard'))
     form = ServerForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.superuser_password.data).decode('utf-8')
         server = Server(
             hostname=form.hostname.data, domain=form.domain.data, purpose=form.purpose.data,
             ip_address=form.ip_address.data, ssh_port=form.ssh_port.data, os=form.os.data,
             cores=form.cores.data, ram=form.ram.data, rom=form.rom.data, datacenter=form.datacenter.data,
             owner=form.owner.data, comment=form.comment.data, superuser_login=form.superuser_login.data,
-            superuser_password=hashed_password
+            superuser_password=form.superuser_password.data
         )
         db.session.add(server)
         db.session.commit()
@@ -251,9 +297,6 @@ def edit_user(id):
         user.username = form.username.data
         user.email = form.email.data
         user.role = form.roles.data
-        if form.password.data:
-            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user.password = hashed_password
         db.session.commit()
         flash('User updated successfully!', 'success')
         return redirect(url_for('list_users'))
@@ -280,6 +323,28 @@ def delete_user(id):
 
     return render_template('delete_user.html', user=user)
 
+@app.route('/admin/users/<int:id>/generate_password', methods=['POST'])
+@login_required
+def generate_user_password(id):
+    if current_user.role != 'Administrator':
+        return jsonify({"error": "Only Administrators can generate passwords."}), 403
+    
+    user = User.query.get(id)
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+    
+    new_password = secrets.token_urlsafe(12)
+    new_hashed_password = generate_password_hash(new_password)
+    user.password = new_hashed_password
+    db.session.commit()
+    
+    response_data = {
+        "message": f"New password generated for user {user.username}",
+        "generated_password": new_password
+    }
+    
+    return jsonify(response_data), 200
+
 @app.route('/generate_api_key', methods=['POST'])
 @login_required
 def generate_key():
@@ -302,7 +367,8 @@ def api_list_servers():
 
 @app.route('/api/servers', methods=['POST'])
 def api_add_server():
-    if not check_api_key():
+    required_roles = ['Moderator', 'Administrator']
+    if not check_api_key(required_roles):
         return jsonify({"error": "Invalid API Key"}), 401
 
     data = request.json
@@ -315,7 +381,8 @@ def api_add_server():
 
 @app.route('/api/servers/<int:id>', methods=['PUT'])
 def api_update_server(id):
-    if not check_api_key():
+    required_roles = ['Moderator', 'Administrator']
+    if not check_api_key(required_roles):
         return jsonify({"error": "Invalid API Key"}), 401
 
     server = Server.query.get(id)
@@ -332,7 +399,8 @@ def api_update_server(id):
 
 @app.route('/api/servers/<int:id>', methods=['DELETE'])
 def api_delete_server(id):
-    if not check_api_key():
+    required_roles = ['Moderator', 'Administrator']
+    if not check_api_key(required_roles):
         return jsonify({"error": "Invalid API Key"}), 401
 
     server = Server.query.get(id)
@@ -343,7 +411,9 @@ def api_delete_server(id):
     db.session.commit()
     return jsonify({"message": "Server deleted successfully"})
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
-    with app.app_context():
-        db.create_all()

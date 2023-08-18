@@ -20,14 +20,19 @@
         <div class="card-content">
             <h2 class="subtitle"><p>Get a list of servers</p></h2>
             <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers</span></p>
-            <p><strong>HTTP Method:</strong> <span class="tag is-success">GET</span></p><br>
+            <p><strong>HTTP Method:</strong> <span class="tag is-success">GET</span></p>
+            <p><strong>Authorized user roles:</strong> <span class="tag is-link">ALL</span></p><br>
 
             <div class="content">
                 <pre>
 {
 "api_key": "your_generated_api_key"
 }</pre>
-            <p>Important: The API key must be passed in the request body.</p>
+            <article class="message is-warning">
+                <div class="message-body">
+                    Important: The API key must be passed in the request body.
+                </div>
+              </article>
             </div>
         </div>
     </div><br>
@@ -36,7 +41,8 @@
         <div class="card-content">
             <h2 class="subtitle"><p>Add new server</p></h2>
             <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers</span></p>
-            <p><strong>HTTP Method:</strong> <span class="tag is-warning">POST</span></p><br>
+            <p><strong>HTTP Method:</strong> <span class="tag is-warning">POST</span></p>
+            <p><strong>Authorized user roles:</strong> <span class="tag is-link">Moderator</span> <span class="tag is-link">Administrator</span></p><br>
 
             <div class="content">
                 <pre>
@@ -57,7 +63,11 @@
     "superuser_login": "root",
     "superuser_password": "super_secret_password"
     }</pre>
-            <p>Important: The API key must be passed in the request body.</p>
+            <article class="message is-warning">
+                <div class="message-body">
+                    Important: The API key must be passed in the request body.
+                </div>
+            </article>
             </div>
         </div>
     </div><br>
@@ -66,7 +76,8 @@
         <div class="card-content">
             <h2 class="subtitle"><p>Delete an existing server</p></h2>
             <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers/&lt;server_id&gt;</span></p>
-            <p><strong>HTTP Method:</strong> <span class="tag is-info">PUT</span></p><br>
+            <p><strong>HTTP Method:</strong> <span class="tag is-info">PUT</span></p>
+            <p><strong>Authorized user roles:</strong> <span class="tag is-link">Moderator</span> <span class="tag is-link">Administrator</span></p><br>
 
             <div class="content">
                 <pre>
@@ -87,7 +98,11 @@
     "superuser_login": "root",
     "superuser_password": "super_secret_password"
     }</pre>
-            <p>Important: The API key must be passed in the request body.</p>
+            <article class="message is-warning">
+                <div class="message-body">
+                    Important: The API key must be passed in the request body.
+                </div>
+            </article>
             </div>
         </div>
     </div><br>
@@ -96,14 +111,19 @@
         <div class="card-content">
             <h2 class="subtitle"><p>Get a list of servers</p></h2>
             <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers/&lt;server_id&gt;</span></p>
-            <p><strong>HTTP Method:</strong> <span class="tag is-danger">DELETE</span></p><br>
+            <p><strong>HTTP Method:</strong> <span class="tag is-danger">DELETE</span></p>
+            <p><strong>Authorized user roles:</strong> <span class="tag is-link">Moderator</span> <span class="tag is-link">Administrator</span></p><br>
 
             <div class="content">
                 <pre>
 {
 "api_key": "your_generated_api_key"
 }</pre>
-            <p>Important: The API key must be passed in the request body.</p>
+            <article class="message is-warning">
+                <div class="message-body">
+                    Important: The API key must be passed in the request body.
+                </div>
+            </article>
             </div>
         </div>
     </div><br>

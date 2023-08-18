@@ -34,10 +34,13 @@
         <div class="column is-one-quarter">
             <div class="columns">
                 <div class="column">
-                    <a href="{{ url_for('edit_user', id=user.id) }}" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i> &nbsp;Edit</a>
+                    <a href="{{ url_for('edit_user', id=user.id) }}" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i></a>
                 </div>
                 <div class="column">
-                    <a href="{{ url_for('delete_user', id=user.id) }}" class="card-footer-item button is-danger"><i class="fa-solid fa-trash"></i>&nbsp;Delete</a>
+                    <a href="{{ url_for('delete_user', id=user.id) }}" class="card-footer-item button is-danger"><i class="fa-solid fa-trash"></i></a>
+                </div>
+                <div class="column">
+                    <a href="#" class="card-footer-item button is-info generate-password-button" data-user-id="{{ user.id }}"><i class="fa-solid fa-key"></i>&nbsp;Generate password</a>
                 </div>
             </div>
         </div>
@@ -45,5 +48,64 @@
     {% endfor %}
     </div>
 </div>
+<div id="passwordModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+        <p class="modal-card-title">Generated Password</p>
+        </header>
+        <section class="modal-card-body">
+        <p id="generatedPassword"></p>
+        </section>
+        <footer class="modal-card-foot">
+        <button class="button is-success" id="copyPassword">Copy Password</button>
+        <button class="button" id="closeModal">Close</button>
+        </footer>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const generateButtons = document.querySelectorAll(".generate-password-button");
 
+    generateButtons.forEach(button => {
+    button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        
+        const userId = button.dataset.userId;
+        const response = await fetch(`/admin/users/${userId}/generate_password`, {
+        method: "POST"
+        });
+        
+        if (response.ok) {
+        const data = await response.json();
+        const generatedPassword = data.generated_password;
+        
+        const passwordModal = document.getElementById("passwordModal");
+        const generatedPasswordElement = document.getElementById("generatedPassword");
+        const copyPasswordButton = document.getElementById("copyPassword");
+        
+        generatedPasswordElement.textContent = generatedPassword;
+        
+        copyPasswordButton.addEventListener("click", () => {
+            const tempTextarea = document.createElement("textarea");
+            tempTextarea.value = generatedPassword;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextarea);
+            alert("Password copied to clipboard!");
+        });
+        
+        passwordModal.classList.add("is-active");
+        
+        const closeModalButton = document.getElementById("closeModal");
+        closeModalButton.addEventListener("click", () => {
+            passwordModal.classList.remove("is-active");
+        });
+        }
+    });
+    });
+});
+</script>
+    
 {% endblock %}

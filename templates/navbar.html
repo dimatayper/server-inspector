@@ -38,3 +38,25 @@
       </div>
     </div>
   </nav>
+  <br>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="container"><div class="notification is-{{ category }}">
+              <button class="delete"></button>
+            {{ message }}
+        </div></div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+    const $notification = $delete.parentNode;
+
+    $delete.addEventListener('click', () => {
+      $notification.parentNode.removeChild($notification);
+    });
+  });
+});
+</script>

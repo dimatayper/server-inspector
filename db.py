@@ -25,11 +25,11 @@ class Server(db.Model):
     domain = db.Column(db.String(120), nullable=False)
     purpose = db.Column(db.String(120), nullable=False)
     ip_address = db.Column(db.String(20), nullable=False)
-    ssh_port = db.Column(db.Integer, nullable=False)
+    ssh_port = db.Column(db.String(20), nullable=False)
     os = db.Column(db.String(120), nullable=False)
-    cores = db.Column(db.Integer, nullable=False)
-    ram = db.Column(db.Integer, nullable=False)
-    rom = db.Column(db.Integer, nullable=False)
+    cores = db.Column(db.String(120), nullable=False)
+    ram = db.Column(db.String(120), nullable=False)
+    rom = db.Column(db.String(120), nullable=False)
     datacenter = db.Column(db.String(120), nullable=False)
     owner = db.Column(db.String(120), nullable=False)
     comment = db.Column(db.Text, nullable=True)
@@ -53,6 +53,4 @@ class Server(db.Model):
             'rom': self.rom,
             'datacenter': self.datacenter,
             'owner': self.owner,
-            'comment': self.comment,
-            'superuser_login': self.superuser_login,
-            'superuser_login': self.superuser_login }
+            'comment': self.comment }

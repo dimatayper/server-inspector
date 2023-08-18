@@ -5,7 +5,7 @@
     <div class="container box ">
         <h1 class="title algolia-lvl0"><p>Profile</p></h1>
     </div>
-
+            
     <div class="container box">
         <div class="columns">
             <div class="column box is-one-third has-background-light">
@@ -19,7 +19,9 @@
                     <strong><p>{{ current_user.username }}</p></strong>
                     <strong><p>{{ current_user.role }}</p></strong>
                 </div>
-                <a href="" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i>&nbsp;Edit</a>
+                <a href="{{ url_for('edit_profile') }}" class="card-footer-item button is-success"><i class="fa-solid fa-pen-to-square"></i>&nbsp;Edit</a>
+                <br>
+                <a href="{{ url_for('edit_password') }}" class="card-footer-item button is-link"><i class="fa-solid fa-key"></i>&nbsp;Change password</a>
             </div>
             <div class="column box has-background-light" style="margin-left: 20px;">
                 <div class="content">

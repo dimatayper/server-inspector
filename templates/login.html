@@ -6,6 +6,27 @@
         <div class="container">
             <div class="columns is-centered">
                 <div class="column is-6-tablet is-5-desktop is-4-widescreen">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                <div class="container"><div class="notification is-{{ category }}">
+                                    <button class="delete"></button>
+                                    {{ message }}
+                                </div></div>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                            const $notification = $delete.parentNode;
+
+                            $delete.addEventListener('click', () => {
+                            $notification.parentNode.removeChild($notification);
+                            });
+                        });
+                        });
+                        </script>
                     <form action="{{ url_for('login') }}" method="POST" class="box is-shadowless">
                         {{ form.hidden_tag() }}
                         <h1 class="title">Sign in</h1>

@@ -38,8 +38,20 @@
                             <strong>ROM:</strong> {{ server.rom }} <br>
                             <strong>Datacenter:</strong> {{ server.datacenter }} <br>
                             <strong>Owner:</strong> {{ server.owner }} <br>
+                            {% if current_user.role in ['Moderator', 'Administrator'] %}
                             <strong>Superuser Login:</strong> {{ server.superuser_login }} <br>
-                            <strong>Superuser Password:</strong> {{ server.superuser_password }} <br>
+                            <strong>Superuser Password:</strong>
+                                <span class="clickable-text" onclick="showPasswordModal('{{ server.superuser_password }}')">**********&nbsp;<i class="fa-solid fa-eye"></i></span>
+                                <div id="passwordModal" class="modal">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-content">
+                                        <div class="box">
+                                            <p><strong>Superuser Password:</strong> {{ server.superuser_password }}</p>
+                                        </div>
+                                    </div>
+                                    <button class="modal-close is-large" aria-label="close"></button>
+                                </div><br>
+                            {% endif %} 
                             <strong>Comment:</strong> {{ server.comment }} <br>
                         </div>
                     </div>
@@ -55,4 +67,20 @@
         </div>
     </div>
 </div>
+<script>
+    function showPasswordModal(password) {
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordBox = passwordModal.querySelector('.box');
+        passwordBox.innerHTML = `<p><strong>Superuser Password:</strong> ${password}</p>`;
+        passwordModal.classList.add('is-active');
+    }
+
+    document.querySelectorAll('.modal-close').forEach((closeButton) => {
+        closeButton.addEventListener('click', () => {
+            document.querySelectorAll('.modal').forEach((modal) => {
+                modal.classList.remove('is-active');
+            });
+        });
+    });
+</script>
 {% endblock %}
