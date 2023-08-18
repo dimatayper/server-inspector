@@ -288,6 +288,10 @@ def generate_key():
     flash('API key has been generated.', 'success')
     return redirect(url_for('profile'))
 
+@app.route('/api/docs', methods=['GET'])
+def api_docs():
+    return render_template('api_docs.html')
+
 @app.route('/api/servers', methods=['GET'])
 def api_list_servers():
     if not check_api_key():

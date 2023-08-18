@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="container mt-5">
+    <div class="container box ">
+        <div class="columns">
+            <div class="column">
+                <h1 class="title algolia-lvl0"><p>API references</p></h1>
+            </div>
+            <div class="column"></div>
+            <div class="column">
+                {% if current_user.api_key %}
+                    <strong>Your API key: </strong><span class="tag is-dark is-medium">{{ current_user.api_key }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-content">
+            <h2 class="subtitle"><p>Get a list of servers</p></h2>
+            <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers</span></p>
+            <p><strong>HTTP Method:</strong> <span class="tag is-success">GET</span></p><br>
+
+            <div class="content">
+                <pre>
+{
+"api_key": "your_generated_api_key"
+}</pre>
+            <p>Important: The API key must be passed in the request body.</p>
+            </div>
+        </div>
+    </div><br>
+
+    <div class="card">
+        <div class="card-content">
+            <h2 class="subtitle"><p>Add new server</p></h2>
+            <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers</span></p>
+            <p><strong>HTTP Method:</strong> <span class="tag is-warning">POST</span></p><br>
+
+            <div class="content">
+                <pre>
+{
+    "api_key": "your_generated_api_key",
+    "hostname": "example-hostname",
+    "domain": "example.com",
+    "purpose": "Web Server",
+    "ip_address": "192.168.1.1",
+    "ssh_port": 22,
+    "os": "Linux",
+    "cores": 4,
+    "ram": 4096,
+    "rom": 50000,
+    "datacenter": "NY Datacenter",
+    "owner": "John Doe",
+    "comment": "Test server",
+    "superuser_login": "root",
+    "superuser_password": "super_secret_password"
+    }</pre>
+            <p>Important: The API key must be passed in the request body.</p>
+            </div>
+        </div>
+    </div><br>
+
+    <div class="card">
+        <div class="card-content">
+            <h2 class="subtitle"><p>Delete an existing server</p></h2>
+            <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers/&lt;server_id&gt;</span></p>
+            <p><strong>HTTP Method:</strong> <span class="tag is-info">PUT</span></p><br>
+
+            <div class="content">
+                <pre>
+{
+    "api_key": "your_generated_api_key",
+    "hostname": "new-example-hostname",
+    "domain": "new-example.com",
+    "purpose": "new-Web Server",
+    "ip_address": "192.168.1.2",
+    "ssh_port": 23,
+    "os": "Linux",
+    "cores": 4,
+    "ram": 4096,
+    "rom": 50000,
+    "datacenter": "NY Datacenter",
+    "owner": "John Doe",
+    "comment": "Test server",
+    "superuser_login": "root",
+    "superuser_password": "super_secret_password"
+    }</pre>
+            <p>Important: The API key must be passed in the request body.</p>
+            </div>
+        </div>
+    </div><br>
+
+    <div class="card">
+        <div class="card-content">
+            <h2 class="subtitle"><p>Get a list of servers</p></h2>
+            <p><strong>Endpoint: </strong><span class="tag is-light">/api/servers/&lt;server_id&gt;</span></p>
+            <p><strong>HTTP Method:</strong> <span class="tag is-danger">DELETE</span></p><br>
+
+            <div class="content">
+                <pre>
+{
+"api_key": "your_generated_api_key"
+}</pre>
+            <p>Important: The API key must be passed in the request body.</p>
+            </div>
+        </div>
+    </div><br>
+    
+</div>
+{% endblock %}

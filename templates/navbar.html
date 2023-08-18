@@ -18,6 +18,8 @@
   
         <a class="navbar-item" href="{{ url_for('profile') }}">Profile</a>
 
+        <a class="navbar-item" href="{{ url_for('api_docs') }}">API</a>
+
         {% if current_user.role == 'Administrator' %}
           <a class="navbar-item" href="{{ url_for('list_users') }}">Users</a>
         {% endif %}
